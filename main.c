@@ -4,8 +4,6 @@
 
 int main(void) {
 
-    float *WaveformSample = calloc(1000, sizeof(float));
-
-    free(WaveformSample);
+    EightStruct *WaveformSample = calloc(1000, sizeof(EightStruct));
     return 0;
 }
