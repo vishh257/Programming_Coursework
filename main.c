@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "eightstruct.h"
+#include "Waveform.h"
 
 int main(void) {
 
@@ -17,12 +17,14 @@ int main(void) {
         return 1;
     }
 
-    char buffer[256];
+    char buffer[256]; //buffer to store values from fgets
+
     fgets(buffer, sizeof(buffer), pCSV); //skipping the header
+
     while ((fgets(buffer, sizeof(buffer), pCSV) != NULL) && i < 1000) {
 
-        char *token = strtok(buffer, ",");
-        WaveformSample[i].timestamp  = atof(token);
+        char *token = strtok(buffer, ","); //temp array like datastructure to store string from strtok
+        WaveformSample[i].timestamp  = atof(token); //converting string into float to store into struct
 
         token = strtok(NULL, ",");
         WaveformSample[i].phase_A_voltage  = atof(token);
@@ -45,7 +47,7 @@ int main(void) {
         token = strtok(NULL, ",");
         WaveformSample[i].thd_percent  = atof(token);
 
-      i++;
+      i++; //increment i to store it into next row in the struct
     }
 
     //printf("%.16f\n", WaveformSample[50].phase_C_voltage);
