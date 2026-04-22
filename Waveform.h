@@ -1,5 +1,3 @@
-//
-// Created by Vishvesh on 02/0
 #ifndef PROGRAMMING_COURSEWORK_EIGHTSTRUCT_H
 #define PROGRAMMING_COURSEWORK_EIGHTSTRUCT_H
 typedef struct{

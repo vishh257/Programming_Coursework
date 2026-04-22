@@ -7,4 +7,6 @@ add_executable(Programming_Coursework main.c
         Waveform.h
         Waveform.c
         Waveform.c
+        io.h
+        io.c
 )
