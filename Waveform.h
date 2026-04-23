@@ -6,5 +6,5 @@ typedef struct{
 
 }EightStruct;
 
-void rms_voltage(EightStruct *WaveformSample);
+double rms_voltage(double *sample);
 #endif //PROGRAMMING_COURSEWORK_EIGHTSTRUCT_H
