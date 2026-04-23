@@ -5,4 +5,6 @@ typedef struct{
     phase_C_voltage, line_current, frequency, power_factor, thd_percent;
 
 }EightStruct;
+
+void rms_voltage(EightStruct *WaveformSample);
 #endif //PROGRAMMING_COURSEWORK_EIGHTSTRUCT_H

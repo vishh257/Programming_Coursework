@@ -10,8 +10,9 @@ int main(void) {
     EightStruct *WaveformSample = calloc(1000, sizeof(EightStruct));
     //creating an array of struct
 
-    load_value("power_quality_log.csv", WaveformSample);
+    load_value("power_quality_log.csv", WaveformSample); //calling the function to load data
 
+    rms_voltage(WaveformSample);
 
     free(WaveformSample);
 

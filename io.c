@@ -7,7 +7,7 @@
 void load_value(const char *filename, EightStruct *WaveformSample) {
 
     int i = 0;
-    FILE *pCSV = fopen(filename, "r");
+    FILE *pCSV = fopen(filename, "r"); //opening csv file
 
     if(pCSV == NULL){
         printf("Could not open file");  //indicating the user if opening the file fails
