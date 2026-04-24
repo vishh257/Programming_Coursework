@@ -7,4 +7,5 @@ typedef struct{
 }EightStruct;
 
 double rms_voltage(double *sample);
+void sort(EightStruct *WaveformSample, char phase);
 #endif //PROGRAMMING_COURSEWORK_EIGHTSTRUCT_H
