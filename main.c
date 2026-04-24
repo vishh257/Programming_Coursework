@@ -5,8 +5,8 @@
 
 int main(void) {
 
-    int i = 0;
-    double rms_A, rms_B, rms_C;
+    double rms_A, rms_B, rms_C, p2p_A, p2p_B, p2p_C, mean_A, mean_B, mean_C; // all the metrics
+
 
     EightStruct *WaveformSample = calloc(1000, sizeof(EightStruct));
     //creating an array of struct
@@ -18,13 +18,18 @@ int main(void) {
     rms_B = rms_voltage(&(WaveformSample[0].phase_B_voltage));
     rms_C = rms_voltage(&(WaveformSample[0].phase_C_voltage));
 
+    //calling sort function
     sort(WaveformSample, 'C');
 
     //testing sort
-    for (int t = 0; t < 1000; t++) {
+    /*for (int t = 0; t < 1000; t++) {
         double test123 = WaveformSample[t].phase_C_voltage;
         printf("%lf\n", test123);
-    }
+    }*/
+
+    analysis(&(WaveformSample[0].phase_A_voltage), &p2p_A, &mean_A);
+
+    printf("%.16lf\n", mean_A);
     free(WaveformSample);
 
     return 0;

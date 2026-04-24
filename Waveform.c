@@ -16,6 +16,33 @@ double rms_voltage(double *sample){
     return sqrt(temp/1000);
 }
 
+void analysis(double *sample, double *p2p, double *mean){
+
+    double high = 0, low = 0, temp_mean = 0;
+    double tempH = (*sample);
+    double tempL = (*sample);
+
+    fabs(tempH) >= 324.9 ? printf("\nClipping Detected at 1st Value\n") : (void)0;
+
+    for (int i = 0; i < 1000; i++) {
+
+       temp_mean += *(sample + (8*i));
+
+       if (fabs(*(sample + (8*i))) >= 324.9 ) {
+           double cuttoff_value = *(sample + (8*i));
+           printf("Clipping Detected at value %d\nThe value is %.16lf\n\n", (i + 2), cuttoff_value);
+       }
+
+       if (*(sample + (8*i)) > tempH) tempH = *(sample + (8*i));
+       if (*(sample + (8*i)) < tempL) tempL = *(sample + (8*i));
+   }
+    high = tempH;
+    low = tempL;
+
+    *p2p = high - low;
+    *mean = temp_mean/1000;
+}
+
 void sort(EightStruct *WaveformSample, char phase) {
 
     double tempsort;
@@ -28,7 +55,11 @@ void sort(EightStruct *WaveformSample, char phase) {
 
         else if (phase == 'C')     tempsort = WaveformSample[i].phase_C_voltage;
 
-        else return;
+        else {
+            printf("***Invalid Phase***\n");
+            return;
+        }
+
 
             int x = i - 1; //to access and compare element to the left
 
