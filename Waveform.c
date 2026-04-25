@@ -13,6 +13,8 @@ double rms_voltage(double *sample){
         //adding 8 to access the next value of the phase voltage
     }
 
+    if (sqrt(temp/1000)  >= 207 && sqrt(temp/1000)  <= 253) printf("Phase Within Tolerance\n");
+
     return sqrt(temp/1000);
 }
 
@@ -41,6 +43,21 @@ void analysis(double *sample, double *p2p, double *mean){
 
     *p2p = high - low;
     *mean = temp_mean/1000;
+}
+
+void variance(double *sample, double mean, double *variance, double *std_deviation) {
+
+    double temp = 0;
+
+    for (int i = 0; i < 1000; i++) {
+        temp = temp + pow(*(sample + (8*i)), 2);
+        //adding 8 to access the next value of the phase voltage
+    }
+
+    temp = temp/1000;
+
+    *variance = temp + pow((mean), 2);
+    *std_deviation =  sqrt(temp + pow((mean), 2));
 }
 
 void sort(EightStruct *WaveformSample, char phase) {
