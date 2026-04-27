@@ -23,11 +23,6 @@ int main(void) {
     output->rms_B = rms_voltage(&(WaveformSample[0].phase_B_voltage), &(output->tolerance));
     output->rms_C = rms_voltage(&(WaveformSample[0].phase_C_voltage), &(output->tolerance));
 
-    //calling sort function
-    sort(WaveformSample, 'A');
-    sort(WaveformSample, 'B');
-    sort(WaveformSample, 'C');
-
     //testing sort
     /*for (int t = 0; t < 1000; t++) {
         double test123 = WaveformSample[t].phase_C_voltage;
@@ -41,6 +36,11 @@ int main(void) {
     variance(&(WaveformSample[0].phase_A_voltage), output->mean_A, &output->var_A, &output->sd_A);
     variance(&(WaveformSample[0].phase_B_voltage), output->mean_B, &output->var_B, &output->sd_B);
     variance(&(WaveformSample[0].phase_C_voltage), output->mean_C, &output->var_C, &output->sd_C);
+
+    //calling sort function
+    sort(WaveformSample, 'A');
+    sort(WaveformSample, 'B');
+    sort(WaveformSample, 'C');
 
     results(output);
 
