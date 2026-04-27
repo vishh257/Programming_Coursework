@@ -83,7 +83,7 @@ void results(metrics *output) {
         case 2:
             fprintf(results, "Phase A and B are within tolerance. Phase C is not\n\n");
         case 3:
-            fprintf(results, "All phases are in tolorence\n\n");
+            fprintf(results, "All phases are in tolerance\n\n");
     }
 
     fprintf(results, "Phase A Variance is: %lf\n", output->var_A);
@@ -94,6 +94,11 @@ void results(metrics *output) {
 
     fprintf(results, "Phase C Variance is: %lf\n", output->var_C);
     fprintf(results, "Phase C Standard Deviation is: %lf\n\n", output->sd_C);
+
+    fprintf(results, "Frequency Range: %lf\n\nHz", output->frequency);
+    fprintf(results, "Power factor is: %lf\n\n", output->power_factor);
+    fprintf(results, "Power factor is: %lf\n\n", output->thd_percent);
+
 
     fclose(results);
 }

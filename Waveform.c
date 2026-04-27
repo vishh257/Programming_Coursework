@@ -61,6 +61,25 @@ void variance(double *sample, double mean, double *variance, double *std_deviati
     *std_deviation =  sqrt(temp + pow((mean), 2));
 }
 
+double range(double *sample){
+
+    double high = 0, low = 0, temp_mean = 0;
+    double tempH = (*sample);
+    double tempL = (*sample);
+
+    for (int i = 0; i < 1000; i++) {
+
+        temp_mean += *(sample + (8*i));
+
+        if (*(sample + (8*i)) > tempH) tempH = *(sample + (8*i));
+        if (*(sample + (8*i)) < tempL) tempL = *(sample + (8*i));
+    }
+    high = tempH;
+    low = tempL;
+
+    return high - low;
+}
+
 void sort(EightStruct *WaveformSample, char phase) {
 
     double tempsort;

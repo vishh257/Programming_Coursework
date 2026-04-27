@@ -8,7 +8,7 @@ typedef struct{
 
 typedef struct {
     double rms_A, rms_B, rms_C, p2p_A, p2p_B, p2p_C, mean_A, mean_B, mean_C;
-    double var_A, var_B, var_C, sd_A, sd_B, sd_C;
+    double var_A, var_B, var_C, sd_A, sd_B, sd_C, frequency, power_factor, thd_percent;
     int clipping, tolerance;
 }metrics;
 
@@ -17,6 +17,8 @@ double rms_voltage(double *sample, int *tolerance);
 void analysis(double *sample, double *p2p, double *mean, int *clipping);
 
 void variance(double *sample, double mean, double *variance, double *std_deviation);
+
+double range(double *sample);
 
 void sort(EightStruct *WaveformSample, char phase);
 

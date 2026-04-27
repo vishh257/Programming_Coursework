@@ -42,6 +42,10 @@ int main(void) {
     sort(WaveformSample, 'B');
     sort(WaveformSample, 'C');
 
+    output->frequency = range(&(WaveformSample[0].frequency));
+    output->power_factor = range(&(WaveformSample[0].power_factor));
+    output->thd_percent = range(&(WaveformSample[0].thd_percent));
+
     results(output);
 
     free(WaveformSample);
