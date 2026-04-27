@@ -8,4 +8,6 @@
 
 void load_value(const char *filename, EightStruct *WaveformSample);
 
+void results(metrics *output);
+
 #endif //PROGRAMMING_COURSEWORK_IO_H

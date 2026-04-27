@@ -9,10 +9,10 @@ typedef struct{
 typedef struct {
     double rms_A, rms_B, rms_C, p2p_A, p2p_B, p2p_C, mean_A, mean_B, mean_C;
     double var_A, var_B, var_C, sd_A, sd_B, sd_C;
-    int clipping;
+    int clipping, tolerance;
 }metrics;
 
-double rms_voltage(double *sample);
+double rms_voltage(double *sample, int *tolerance);
 
 void analysis(double *sample, double *p2p, double *mean, int *clipping);
 

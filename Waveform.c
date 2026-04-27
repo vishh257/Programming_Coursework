@@ -4,7 +4,7 @@
 #include "Waveform.h"
 #include "io.h"
 
-double rms_voltage(double *sample){
+double rms_voltage(double *sample, int *tolerance){
     double temp = 0; //temporary variable to store values
 
     //loop to access all 1000 elements of each phase
@@ -13,7 +13,7 @@ double rms_voltage(double *sample){
         //adding 8 to access the next value of the phase voltage
     }
 
-    if (sqrt(temp/1000)  >= 207 && sqrt(temp/1000)  <= 253) printf("Phase Within Tolerance\n");
+    if (sqrt(temp/1000)  >= 207 && sqrt(temp/1000)  <= 253) (*tolerance)++;
 
     return sqrt(temp/1000);
 }

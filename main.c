@@ -19,9 +19,9 @@ int main(void) {
     load_value("power_quality_log.csv", WaveformSample); //calling the function to load data
 
     //calling functions to calculate rms voltage for each phase
-    output->rms_A = rms_voltage(&(WaveformSample[0].phase_A_voltage));
-    output->rms_B = rms_voltage(&(WaveformSample[0].phase_B_voltage));
-    output->rms_C = rms_voltage(&(WaveformSample[0].phase_C_voltage));
+    output->rms_A = rms_voltage(&(WaveformSample[0].phase_A_voltage), &(output->tolerance));
+    output->rms_B = rms_voltage(&(WaveformSample[0].phase_B_voltage), &(output->tolerance));
+    output->rms_C = rms_voltage(&(WaveformSample[0].phase_C_voltage), &(output->tolerance));
 
     //calling sort function
     sort(WaveformSample, 'A');
@@ -34,15 +34,16 @@ int main(void) {
         printf("%lf\n", test123);
     }*/
 
-    analysis(&(WaveformSample[0].phase_A_voltage), &output->rms_A, &output->mean_A, &output->clipping);
-    analysis(&(WaveformSample[0].phase_B_voltage), &output->rms_B, &output->mean_B, &output->clipping);
-    analysis(&(WaveformSample[0].phase_C_voltage), &output->rms_C, &output->mean_C, &output->clipping);
+    analysis(&(WaveformSample[0].phase_A_voltage), &output->p2p_A, &output->mean_A, &output->clipping);
+    analysis(&(WaveformSample[0].phase_B_voltage), &output->p2p_B, &output->mean_B, &output->clipping);
+    analysis(&(WaveformSample[0].phase_C_voltage), &output->p2p_C, &output->mean_C, &output->clipping);
 
     variance(&(WaveformSample[0].phase_A_voltage), output->mean_A, &output->var_A, &output->sd_A);
     variance(&(WaveformSample[0].phase_B_voltage), output->mean_B, &output->var_B, &output->sd_B);
     variance(&(WaveformSample[0].phase_C_voltage), output->mean_C, &output->var_C, &output->sd_C);
 
-    printf("%lf\n", output->sd_A);
+    results(output);
+
     free(WaveformSample);
     free(output);
 
