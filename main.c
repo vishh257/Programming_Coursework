@@ -6,20 +6,26 @@
 int main(void) {
 
     // all the metrics
-    double rms_A, rms_B, rms_C, p2p_A, p2p_B, p2p_C, mean_A, mean_B, mean_C;
+    /*double rms_A, rms_B, rms_C, p2p_A, p2p_B, p2p_C, mean_A, mean_B, mean_C;
     double var_A, var_B, var_C, sd_A, sd_B, sd_C;
+    int clipping;*/
+
 
     EightStruct *WaveformSample = calloc(1000, sizeof(EightStruct));
+    metrics *output = calloc(1, sizeof(metrics));
+
     //creating an array of struct
 
     load_value("power_quality_log.csv", WaveformSample); //calling the function to load data
 
     //calling functions to calculate rms voltage for each phase
-    rms_A = rms_voltage(&(WaveformSample[0].phase_A_voltage));
-    rms_B = rms_voltage(&(WaveformSample[0].phase_B_voltage));
-    rms_C = rms_voltage(&(WaveformSample[0].phase_C_voltage));
+    output->rms_A = rms_voltage(&(WaveformSample[0].phase_A_voltage));
+    output->rms_B = rms_voltage(&(WaveformSample[0].phase_B_voltage));
+    output->rms_C = rms_voltage(&(WaveformSample[0].phase_C_voltage));
 
     //calling sort function
+    sort(WaveformSample, 'A');
+    sort(WaveformSample, 'B');
     sort(WaveformSample, 'C');
 
     //testing sort
@@ -28,16 +34,18 @@ int main(void) {
         printf("%lf\n", test123);
     }*/
 
-    analysis(&(WaveformSample[0].phase_A_voltage), &p2p_A, &mean_A);
-    analysis(&(WaveformSample[0].phase_B_voltage), &p2p_B, &mean_B);
-    analysis(&(WaveformSample[0].phase_C_voltage), &p2p_C, &mean_C);
+    analysis(&(WaveformSample[0].phase_A_voltage), &output->rms_A, &output->mean_A, &output->clipping);
+    analysis(&(WaveformSample[0].phase_B_voltage), &output->rms_B, &output->mean_B, &output->clipping);
+    analysis(&(WaveformSample[0].phase_C_voltage), &output->rms_C, &output->mean_C, &output->clipping);
 
-    variance(&(WaveformSample[0].phase_A_voltage), mean_A, &var_A, &sd_A);
-    variance(&(WaveformSample[0].phase_B_voltage), mean_B, &var_B, &sd_B);
-    variance(&(WaveformSample[0].phase_C_voltage), mean_C, &var_C, &sd_C);
+    variance(&(WaveformSample[0].phase_A_voltage), output->mean_A, &output->var_A, &output->sd_A);
+    variance(&(WaveformSample[0].phase_B_voltage), output->mean_B, &output->var_B, &output->sd_B);
+    variance(&(WaveformSample[0].phase_C_voltage), output->mean_C, &output->var_C, &output->sd_C);
 
-    printf("%.16lf\n", sd_A);
+    printf("%lf\n", output->sd_A);
     free(WaveformSample);
+    free(output);
+
 
     return 0;
 }

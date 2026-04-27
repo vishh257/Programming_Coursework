@@ -54,3 +54,12 @@ void load_value(const char *filename, EightStruct *WaveformSample) {
 
     fclose(pCSV);
 }
+
+/*void results() {
+
+    FILE *results = fopen("output.txt", "w");
+
+    fprintf(results, );
+
+
+}*/

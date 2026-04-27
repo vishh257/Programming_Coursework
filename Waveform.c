@@ -18,7 +18,7 @@ double rms_voltage(double *sample){
     return sqrt(temp/1000);
 }
 
-void analysis(double *sample, double *p2p, double *mean){
+void analysis(double *sample, double *p2p, double *mean, int *clipping){
 
     double high = 0, low = 0, temp_mean = 0;
     double tempH = (*sample);
@@ -33,6 +33,7 @@ void analysis(double *sample, double *p2p, double *mean){
        if (fabs(*(sample + (8*i))) >= 324.9 ) {
            double cuttoff_value = *(sample + (8*i));
            printf("Clipping Detected at value %d\nThe value is %.16lf\n\n", (i + 2), cuttoff_value);
+           (*clipping)++;
        }
 
        if (*(sample + (8*i)) > tempH) tempH = *(sample + (8*i));
