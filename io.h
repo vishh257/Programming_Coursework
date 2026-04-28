@@ -6,7 +6,9 @@
 #define PROGRAMMING_COURSEWORK_IO_H
 #include "Waveform.h"
 
-void load_value(const char *filename, EightStruct *WaveformSample);
+int rows(const char *filename);
+
+void load_value(const char *filename, EightStruct *WaveformSample, int rows);
 
 void results(metrics *output);
 

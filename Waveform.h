@@ -9,17 +9,17 @@ typedef struct{
 typedef struct {
     double rms_A, rms_B, rms_C, p2p_A, p2p_B, p2p_C, mean_A, mean_B, mean_C;
     double var_A, var_B, var_C, sd_A, sd_B, sd_C, frequency, power_factor, thd_percent;
-    int clipping, tolerance;
+    int clipping, tolerance, rows;
 }metrics;
 
-double rms_voltage(double *sample, int *tolerance);
+double rms_voltage(double *sample, metrics *output);
 
-void analysis(double *sample, double *p2p, double *mean, int *clipping);
+void analysis(double *sample, double *p2p, double *mean, int *clipping, int rows);
 
-void variance(double *sample, double mean, double *variance, double *std_deviation);
+void variance(double *sample, double mean, double *variance, double *std_deviation, int rows);
 
-double range(double *sample);
+double range(double *sample, int rows);
 
-void sort(EightStruct *WaveformSample, char phase);
+void sort(EightStruct *WaveformSample, char phase, int rows);
 
 #endif //PROGRAMMING_COURSEWORK_EIGHTSTRUCT_H

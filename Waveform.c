@@ -4,21 +4,21 @@
 #include "Waveform.h"
 #include "io.h"
 
-double rms_voltage(double *sample, int *tolerance){
+double rms_voltage(double *sample, metrics *output){
     double temp = 0; //temporary variable to store values
 
     //loop to access all 1000 elements of each phase
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < output->rows; i++) {
         temp = temp + pow(*(sample + (8*i)), 2);
         //adding 8 to access the next value of the phase voltage
     }
 
-    if (sqrt(temp/1000)  >= 207 && sqrt(temp/1000)  <= 253) (*tolerance)++;
+    if (sqrt(temp/output->rows)  >= 207 && sqrt(temp/output->rows)  <= 253) (output->tolerance)++;
 
-    return sqrt(temp/1000);
+    return sqrt(temp/output->rows);
 }
 
-void analysis(double *sample, double *p2p, double *mean, int *clipping){
+void analysis(double *sample, double *p2p, double *mean, int *clipping, int rows){
 
     double high = 0, low = 0, temp_mean = 0;
     double tempH = (*sample);
@@ -26,7 +26,7 @@ void analysis(double *sample, double *p2p, double *mean, int *clipping){
 
     fabs(tempH) >= 324.9 ? printf("\nClipping Detected at 1st Value\n") : (void)0;
 
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < rows; i++) {
 
        temp_mean += *(sample + (8*i));
 
@@ -43,31 +43,31 @@ void analysis(double *sample, double *p2p, double *mean, int *clipping){
     low = tempL;
 
     *p2p = high - low;
-    *mean = temp_mean/1000;
+    *mean = temp_mean/rows;
 }
 
-void variance(double *sample, double mean, double *variance, double *std_deviation) {
+void variance(double *sample, double mean, double *variance, double *std_deviation, int rows) {
 
     double temp = 0;
 
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < rows; i++) {
         temp = temp + pow(*(sample + (8*i)), 2);
         //adding 8 to access the next value of the phase voltage
     }
 
-    temp = temp/1000;
+    temp = temp/rows;
 
     *variance = temp + pow((mean), 2);
     *std_deviation =  sqrt(temp + pow((mean), 2));
 }
 
-double range(double *sample){
+double range(double *sample, int rows){
 
     double high = 0, low = 0, temp_mean = 0;
     double tempH = (*sample);
     double tempL = (*sample);
 
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < rows; i++) {
 
         temp_mean += *(sample + (8*i));
 
@@ -80,11 +80,11 @@ double range(double *sample){
     return high - low;
 }
 
-void sort(EightStruct *WaveformSample, char phase) {
+void sort(EightStruct *WaveformSample, char phase, int rows) {
 
     double tempsort;
 
-    for (int i = 1; i < 1000; i++) {
+    for (int i = 1; i < rows; i++) {
         //checking user input of which phase
         if (phase == 'A')          tempsort = WaveformSample[i].phase_A_voltage;
 

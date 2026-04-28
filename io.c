@@ -4,7 +4,29 @@
 #include "io.h"
 #include "Waveform.h"
 
-void load_value(const char *filename, EightStruct *WaveformSample) {
+int rows(const char *filename) {
+
+    int count = 0;
+    FILE *pCSV = fopen(filename, "r"); //opening csv file
+
+    if(pCSV == NULL){
+        printf("Could not open file");  //indicating the user if opening the file fails
+        return 1;
+    }
+
+    char buffer[256]; //buffer to store values from fgets
+
+    fgets(buffer, sizeof(buffer), pCSV);
+
+    while (fgets(buffer, sizeof(buffer), pCSV) != NULL) {
+        count++;
+    }
+
+    fclose(pCSV);
+    return count;
+}
+
+void load_value(const char *filename, EightStruct *WaveformSample, int rows) {
 
     int i = 0;
     FILE *pCSV = fopen(filename, "r"); //opening csv file
@@ -19,7 +41,7 @@ void load_value(const char *filename, EightStruct *WaveformSample) {
 
     fgets(buffer, sizeof(buffer), pCSV); //skipping the header
 
-    while ((fgets(buffer, sizeof(buffer), pCSV) != NULL) && i < 1000) {
+    while ((fgets(buffer, sizeof(buffer), pCSV) != NULL) && i < rows) {
 
         char *token = strtok(buffer, ","); //temp array like datastructure to store string from strtok
         WaveformSample[i].timestamp  = atof(token); //converting string into float to store into struct
@@ -47,10 +69,6 @@ void load_value(const char *filename, EightStruct *WaveformSample) {
 
         i++; //increment i to store it into next row in the struct
     }
-
-    //printf("%.16f\n", WaveformSample[50].phase_C_voltage);
-    //printf("%.16f\n", WaveformSample[79].phase_A_voltage);
-    //printf("%.16f\n", WaveformSample[2].thd_percent);
 
     fclose(pCSV);
 }
