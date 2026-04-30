@@ -11,7 +11,12 @@ int main(void) {
     EightStruct *WaveformSample = calloc(output->rows, sizeof(EightStruct));
 
 
-    load_value("power_quality_log.csv", WaveformSample, output->rows); //calling the function to load data
+    int i = load_value("power_quality_log.csv", WaveformSample, output->rows); //calling the function to load data
+    if (i == 1) {
+        free(output);
+        free(WaveformSample);
+        return -1;
+    }
 
     //calling functions to calculate rms voltage for each phase
     output->phase[0].rms = rms_voltage(&(WaveformSample[0].phase_A_voltage), output, 1);

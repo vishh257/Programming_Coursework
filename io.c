@@ -27,15 +27,14 @@ int rows(const char *filename) {
     return count;
 }
 
-void load_value(const char *filename, EightStruct *WaveformSample, int rows) {
+int load_value(const char *filename, EightStruct *WaveformSample, int rows) {
 
     int i = 0;
     FILE *pCSV = fopen(filename, "r"); //opening csv file
 
     if(pCSV == NULL){
         printf("Could not open file");  //indicating the user if opening the file fails
-        free(WaveformSample);
-        return;
+        return 1;
     }
 
     char buffer[256]; //buffer to store values from fgets
@@ -72,6 +71,8 @@ void load_value(const char *filename, EightStruct *WaveformSample, int rows) {
     }
 
     fclose(pCSV);
+
+    return 0;
 }
 
 void results(metrics *output) {

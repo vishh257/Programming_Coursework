@@ -8,7 +8,7 @@
 
 int rows(const char *filename);
 
-void load_value(const char *filename, EightStruct *WaveformSample, int rows);
+int load_value(const char *filename, EightStruct *WaveformSample, int rows);
 
 void results(metrics *output);
 
