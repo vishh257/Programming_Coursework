@@ -7,18 +7,25 @@ typedef struct{
 }EightStruct;
 
 typedef struct {
-    double rms_A, rms_B, rms_C, p2p_A, p2p_B, p2p_C, mean_A, mean_B, mean_C;
-    double var_A, var_B, var_C, sd_A, sd_B, sd_C, frequency, power_factor, thd_percent;
+    double rms, p2p, mean, var, sd;
+    uint8_t status;
+}PhaseMetrics;
+
+typedef struct {
+    PhaseMetrics phase[3];
+    double frequency, power_factor, thd_percent;
     int clipping, tolerance, rows;
 }metrics;
 
-double rms_voltage(double *sample, metrics *output);
+double rms_voltage(double *sample, metrics *output, int phaseno);
 
-void analysis(double *sample, double *p2p, double *mean, int *clipping, int rows);
+void analysis(double *sample, metrics *output, int phaseno);
 
 void variance(double *sample, double mean, double *variance, double *std_deviation, int rows);
 
 double range(double *sample, int rows);
+
+void bitcheck(metrics *output);
 
 void sort(EightStruct *WaveformSample, char phase, int rows);
 

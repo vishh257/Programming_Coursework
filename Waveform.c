@@ -1,10 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdint.h>
 #include "Waveform.h"
 #include "io.h"
 
-double rms_voltage(double *sample, metrics *output){
+#define RMS_OUT_OF_TOLERANCE            (1 << 0)
+#define P2P_NOT_NORMAL                  (1 << 1)
+#define ABNORMAL_DC_OFFSET              (1 << 2)
+#define CLIPPING_DETECTED               (1 << 3)
+#define ABNORMAL_FREQUENCY_RANGE        (1 << 4)
+#define ABNORMAL_POWERFACTOR_RANGE      (1 << 5)
+#define ABNORMAL_THD_RANGE              (1 << 6)
+
+
+double rms_voltage(double *sample, metrics *output, int phaseno){
     double temp = 0; //temporary variable to store values
 
     //loop to access all 1000 elements of each phase
@@ -13,27 +23,43 @@ double rms_voltage(double *sample, metrics *output){
         //adding 8 to access the next value of the phase voltage
     }
 
-    if (sqrt(temp/output->rows)  >= 207 && sqrt(temp/output->rows)  <= 253) (output->tolerance)++;
+    if ((sqrt(temp/output->rows)  <= 207 && sqrt(temp/output->rows)  >= 253)) {
+        (output->tolerance)++;
+
+        phaseno == 1 ? output->phase[0].status |= RMS_OUT_OF_TOLERANCE : (void)0;
+        phaseno == 2 ? output->phase[1].status |= RMS_OUT_OF_TOLERANCE : (void)0;
+        phaseno == 3 ? output->phase[2].status |= RMS_OUT_OF_TOLERANCE : (void)0;
+    }
 
     return sqrt(temp/output->rows);
 }
 
-void analysis(double *sample, double *p2p, double *mean, int *clipping, int rows){
+void analysis(double *sample, metrics *output, int phaseno){
 
     double high = 0, low = 0, temp_mean = 0;
     double tempH = (*sample);
     double tempL = (*sample);
 
-    fabs(tempH) >= 324.9 ? printf("\nClipping Detected at 1st Value\n") : (void)0;
+    /*if (fabs(tempH) >= 324.9) {
+        printf("\nClipping Detected at 1st Value\n");
 
-    for (int i = 0; i < rows; i++) {
+        phaseno == 1 ? output->phase[0].status |= RMS_OUT_OF_TOLERANCE : (void)0;
+        phaseno == 2 ? output->phase[1].status |= RMS_OUT_OF_TOLERANCE : (void)0;
+        phaseno == 3 ? output->phase[2].status |= RMS_OUT_OF_TOLERANCE : (void)0;
+    }*/
+
+    for (int i = 0; i < output->rows; i++) {
 
        temp_mean += *(sample + (8*i));
 
        if (fabs(*(sample + (8*i))) >= 324.9 ) {
+           phaseno == 1 ? output->phase[0].status |= CLIPPING_DETECTED : (void)0;
+           phaseno == 2 ? output->phase[1].status |= CLIPPING_DETECTED : (void)0;
+           phaseno == 3 ? output->phase[2].status |= CLIPPING_DETECTED : (void)0;
+
            double cuttoff_value = *(sample + (8*i));
            printf("Clipping Detected at value %d\nThe value is %.16lf\n\n", (i + 2), cuttoff_value);
-           (*clipping)++;
+           (output->clipping)++;
        }
 
        if (*(sample + (8*i)) > tempH) tempH = *(sample + (8*i));
@@ -42,8 +68,27 @@ void analysis(double *sample, double *p2p, double *mean, int *clipping, int rows
     high = tempH;
     low = tempL;
 
-    *p2p = high - low;
-    *mean = temp_mean/rows;
+    if (phaseno == 1) {
+        output->phase[0].p2p = high - low;
+        (output->phase[0].p2p <=650 && output->phase[0].p2p >= 649.5) ? (void)0 : (output->phase[0].status |= P2P_NOT_NORMAL);
+
+        output->phase[0].mean = temp_mean/output->rows;
+        (output->phase[0].mean < 1e-4) ? (void)0 : (output->phase[0].status |= ABNORMAL_DC_OFFSET);
+    }
+    if (phaseno == 2) {
+        output->phase[1].p2p = high - low;
+        (output->phase[1].p2p <=650 && output->phase[1].p2p >= 649.5) ? (void)0 : (output->phase[1].status |= P2P_NOT_NORMAL);
+
+        output->phase[1].mean = temp_mean/output->rows;
+        (output->phase[1].mean < 1e-4) ? (void)0 : (output->phase[1].status |= ABNORMAL_DC_OFFSET);
+    }
+    if (phaseno == 3) {
+        output->phase[2].p2p = high - low;
+        (output->phase[2].p2p <=650 && output->phase[2].p2p >= 649.5) ? (void)0 : (output->phase[2].status |= P2P_NOT_NORMAL);
+
+        output->phase[2].mean = temp_mean/output->rows;
+        (output->phase[2].mean < 1e-4) ? (void)0 : (output->phase[2].status |= ABNORMAL_DC_OFFSET);
+    }
 }
 
 void variance(double *sample, double mean, double *variance, double *std_deviation, int rows) {
@@ -78,6 +123,27 @@ double range(double *sample, int rows){
     low = tempL;
 
     return high - low;
+}
+
+void bitcheck(metrics *output) {
+
+    if (output->frequency > 0.048) {
+        for (int i = 0; i < 3; i++) {
+            output->phase[i].status |= ABNORMAL_FREQUENCY_RANGE;
+        }
+    }
+
+    if (output->power_factor > 0.012) {
+        for (int i = 0; i < 3; i++) {
+            output->phase[i].status |= ABNORMAL_POWERFACTOR_RANGE;
+        }
+    }
+
+    if (output->frequency > 0.18) {
+        for (int i = 0; i < 3; i++) {
+            output->phase[i].status |= ABNORMAL_THD_RANGE;
+        }
+    }
 }
 
 void sort(EightStruct *WaveformSample, char phase, int rows) {

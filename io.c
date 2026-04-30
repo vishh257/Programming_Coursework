@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 #include "io.h"
 #include "Waveform.h"
 
@@ -79,17 +80,17 @@ void results(metrics *output) {
 
     if (results == NULL) printf("\n\nFile does not open");
 
-    fprintf(results, "\nPhase A rms is: %lf\n", output->rms_A);
-    fprintf(results, "Phase A peak to peak is: %lf\n", output->p2p_A);
-    fprintf(results, "Phase A DC offset is: %.16lf\n\n", output->mean_A);
+    fprintf(results, "\nPhase A rms is: %lf\n", output->phase[0].rms);
+    fprintf(results, "Phase A peak to peak is: %lf\n", output->phase[0].p2p);
+    fprintf(results, "Phase A DC offset is: %.16lf\n\n", output->phase[0].mean);
 
-    fprintf(results, "\nPhase B rms is: %lf\n", output->rms_B);
-    fprintf(results, "Phase B peak to peak is: %lf\n", output->p2p_B);
-    fprintf(results, "Phase B DC offset is: %.16lf\n\n", output->mean_B);
+    fprintf(results, "\nPhase B rms is: %lf\n", output->phase[1].rms);
+    fprintf(results, "Phase B peak to peak is: %lf\n", output->phase[1].p2p);
+    fprintf(results, "Phase B DC offset is: %.16lf\n\n", output->phase[1].mean);
 
-    fprintf(results, "\nPhase C rms is: %lf\n", output->rms_C);
-    fprintf(results, "Phase C peak to peak is: %lf\n", output->p2p_C);
-    fprintf(results, "Phase C DC offset is: %.16lf\n\n", output->mean_C);
+    fprintf(results, "\nPhase C rms is: %lf\n", output->phase[2].mean);
+    fprintf(results, "Phase C peak to peak is: %lf\n", output->phase[2].p2p);
+    fprintf(results, "Phase C DC offset is: %.16lf\n\n", output->phase[2].mean);
 
     fprintf(results, "Total clipped samples is %d\n\n", output->clipping);
 
@@ -104,18 +105,38 @@ void results(metrics *output) {
             fprintf(results, "All phases are in tolerance\n\n");
     }
 
-    fprintf(results, "Phase A Variance is: %lf\n", output->var_A);
-    fprintf(results, "Phase A Standard Deviation is: %lf\n\n", output->sd_A);
+    fprintf(results, "Phase A Variance is: %lf\n", output->phase[0].var);
+    fprintf(results, "Phase A Standard Deviation is: %lf\n\n", output->phase[0].sd);
 
-    fprintf(results, "Phase B Variance is: %lf\n", output->var_B);
-    fprintf(results, "Phase B Standard Deviation is: %lf\n\n", output->sd_B);
+    fprintf(results, "Phase B Variance is: %lf\n", output->phase[1].var);
+    fprintf(results, "Phase B Standard Deviation is: %lf\n\n", output->phase[1].sd);
 
-    fprintf(results, "Phase C Variance is: %lf\n", output->var_C);
-    fprintf(results, "Phase C Standard Deviation is: %lf\n\n", output->sd_C);
+    fprintf(results, "Phase C Variance is: %lf\n", output->phase[2].var);
+    fprintf(results, "Phase C Standard Deviation is: %lf\n\n", output->phase[2].sd);
 
     fprintf(results, "Frequency Range: %lf\n\nHz", output->frequency);
     fprintf(results, "Power factor is: %lf\n\n", output->power_factor);
     fprintf(results, "Power factor is: %lf\n\n", output->thd_percent);
+
+    fprintf(results, "Phase A bitstatus:\n");
+    for (int i = 7; i >= 0; i--) {
+        fprintf(results, "%d", (output->phase[0].status >> i) & 1);
+    }
+    fprintf(results, "\n\n");
+
+    fprintf(results, "Phase B bitstatus:\n");
+    for (int i = 7; i >= 0; i--) {
+        fprintf(results, "%d", (output->phase[1].status >> i) & 1);
+    }
+    fprintf(results, "\n\n");
+
+    fprintf(results, "Phase C bitstatus:\n");
+    for (int i = 7; i >= 0; i--) {
+        fprintf(results, "%d", (output->phase[2].status >> i) & 1);
+    }
+    fprintf(results, "\n\n");
+
+    printf("\n");
 
 
     fclose(results);
