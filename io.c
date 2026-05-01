@@ -76,10 +76,11 @@ int load_value(const char *filename, EightStruct *WaveformSample, int rows) {
 }
 
 void results(metrics *output) {
-
     FILE *results = fopen("output.txt", "w");
 
-    if (results == NULL) printf("\n\nFile does not open");
+    if (results == NULL) {
+        printf("\n\nFile does not open");
+        return; }
 
     fprintf(results, "\nPhase A rms is: %lf\n", output->phase[0].rms);
     fprintf(results, "Phase A peak to peak is: %lf\n", output->phase[0].p2p);
@@ -89,7 +90,7 @@ void results(metrics *output) {
     fprintf(results, "Phase B peak to peak is: %lf\n", output->phase[1].p2p);
     fprintf(results, "Phase B DC offset is: %.16lf\n\n", output->phase[1].mean);
 
-    fprintf(results, "\nPhase C rms is: %lf\n", output->phase[2].mean);
+    fprintf(results, "\nPhase C rms is: %lf\n", output->phase[2].rms);
     fprintf(results, "Phase C peak to peak is: %lf\n", output->phase[2].p2p);
     fprintf(results, "Phase C DC offset is: %.16lf\n\n", output->phase[2].mean);
 
@@ -98,12 +99,16 @@ void results(metrics *output) {
     switch (output->tolerance) {
         case 0:
             fprintf(results, "All phases are not in tolerance\n\n");
+            break;
         case 1:
             fprintf(results, "Phase A is within tolerance. Phase B and C are not\n\n");
+            break;
         case 2:
             fprintf(results, "Phase A and B are within tolerance. Phase C is not\n\n");
+            break;
         case 3:
             fprintf(results, "All phases are in tolerance\n\n");
+            break;
     }
 
     fprintf(results, "Phase A Variance is: %lf\n", output->phase[0].var);
@@ -115,9 +120,9 @@ void results(metrics *output) {
     fprintf(results, "Phase C Variance is: %lf\n", output->phase[2].var);
     fprintf(results, "Phase C Standard Deviation is: %lf\n\n", output->phase[2].sd);
 
-    fprintf(results, "Frequency Range: %lf\n\nHz", output->frequency);
+    fprintf(results, "Frequency Range: %lf Hz\n\n", output->frequency);
     fprintf(results, "Power factor is: %lf\n\n", output->power_factor);
-    fprintf(results, "Power factor is: %lf\n\n", output->thd_percent);
+    fprintf(results, "Thd Percent is: %lf\n\n", output->thd_percent);
 
     fprintf(results, "Phase A bitstatus:\n");
     for (int i = 7; i >= 0; i--) {

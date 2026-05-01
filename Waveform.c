@@ -23,7 +23,7 @@ double rms_voltage(double *sample, metrics *output, int phaseno){
         //adding 8 to access the next value of the phase voltage
     }
 
-    if ((sqrt(temp/output->rows)  <= 207 && sqrt(temp/output->rows)  >= 253)) {
+    if ((sqrt(temp/output->rows)  <= 207 || sqrt(temp/output->rows)  >= 253)) {
         (output->tolerance)++;
 
         phaseno == 1 ? output->phase[0].status |= RMS_OUT_OF_TOLERANCE : (void)0;
@@ -102,8 +102,8 @@ void variance(double *sample, double mean, double *variance, double *std_deviati
 
     temp = temp/rows;
 
-    *variance = temp + pow((mean), 2);
-    *std_deviation =  sqrt(temp + pow((mean), 2));
+    *variance = temp - pow((mean), 2);
+    *std_deviation =  sqrt(temp - pow((mean), 2));
 }
 
 double range(double *sample, int rows){
@@ -139,7 +139,7 @@ void bitcheck(metrics *output) {
         }
     }
 
-    if (output->frequency > 0.18) {
+    if (output->thd_percent > 0.18) {
         for (int i = 0; i < 3; i++) {
             output->phase[i].status |= ABNORMAL_THD_RANGE;
         }
