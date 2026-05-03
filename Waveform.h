@@ -14,7 +14,7 @@ typedef struct {
 typedef struct {
     PhaseMetrics phase[3];
     double frequency, power_factor, thd_percent;
-    int clipping, tolerance, rows;
+    int clipping, rows;
 }metrics;
 
 double rms_voltage(double *sample, metrics *output, int phaseno);

@@ -24,8 +24,8 @@ double rms_voltage(double *sample, metrics *output, int phaseno){
     }
 
     if ((sqrt(temp/output->rows)  <= 207 || sqrt(temp/output->rows)  >= 253)) {
-        (output->tolerance)++;
 
+        //flagging the RMS_OUT_OF_TOLERANCE bit
         phaseno == 1 ? output->phase[0].status |= RMS_OUT_OF_TOLERANCE : (void)0;
         phaseno == 2 ? output->phase[1].status |= RMS_OUT_OF_TOLERANCE : (void)0;
         phaseno == 3 ? output->phase[2].status |= RMS_OUT_OF_TOLERANCE : (void)0;
@@ -37,31 +37,28 @@ double rms_voltage(double *sample, metrics *output, int phaseno){
 void analysis(double *sample, metrics *output, int phaseno){
 
     double high = 0, low = 0, temp_mean = 0;
+    //dereferencing the first value
     double tempH = (*sample);
     double tempL = (*sample);
-
-    /*if (fabs(tempH) >= 324.9) {
-        printf("\nClipping Detected at 1st Value\n");
-
-        phaseno == 1 ? output->phase[0].status |= RMS_OUT_OF_TOLERANCE : (void)0;
-        phaseno == 2 ? output->phase[1].status |= RMS_OUT_OF_TOLERANCE : (void)0;
-        phaseno == 3 ? output->phase[2].status |= RMS_OUT_OF_TOLERANCE : (void)0;
-    }*/
 
     for (int i = 0; i < output->rows; i++) {
 
        temp_mean += *(sample + (8*i));
 
+        //checking if any of the values are out of tolerance
        if (fabs(*(sample + (8*i))) >= 324.9 ) {
+
            phaseno == 1 ? output->phase[0].status |= CLIPPING_DETECTED : (void)0;
            phaseno == 2 ? output->phase[1].status |= CLIPPING_DETECTED : (void)0;
            phaseno == 3 ? output->phase[2].status |= CLIPPING_DETECTED : (void)0;
 
+           //printing the info about the value onto the console
            double cuttoff_value = *(sample + (8*i));
            printf("Clipping Detected at value %d\nThe value is %.16lf\n\n", (i + 2), cuttoff_value);
            (output->clipping)++;
        }
 
+       //checking if the new value if less or more than the previous value
        if (*(sample + (8*i)) > tempH) tempH = *(sample + (8*i));
        if (*(sample + (8*i)) < tempL) tempL = *(sample + (8*i));
    }
@@ -69,9 +66,11 @@ void analysis(double *sample, metrics *output, int phaseno){
     low = tempL;
 
     if (phaseno == 1) {
+        //calculating p2p and checking tolerance
         output->phase[0].p2p = high - low;
         (output->phase[0].p2p <=650 && output->phase[0].p2p >= 649.5) ? (void)0 : (output->phase[0].status |= P2P_NOT_NORMAL);
 
+        //calculating mean and checking tolerance
         output->phase[0].mean = temp_mean/output->rows;
         (output->phase[0].mean < 1e-4) ? (void)0 : (output->phase[0].status |= ABNORMAL_DC_OFFSET);
     }
@@ -101,7 +100,7 @@ void variance(double *sample, double mean, double *variance, double *std_deviati
     }
 
     temp = temp/rows;
-
+    //using the value of mean from the analysis function to calculate var and sd
     *variance = temp - pow((mean), 2);
     *std_deviation =  sqrt(temp - pow((mean), 2));
 }
@@ -116,6 +115,7 @@ double range(double *sample, int rows){
 
         temp_mean += *(sample + (8*i));
 
+        //uses the same logic as above in the analysis function
         if (*(sample + (8*i)) > tempH) tempH = *(sample + (8*i));
         if (*(sample + (8*i)) < tempL) tempL = *(sample + (8*i));
     }

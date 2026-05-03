@@ -10,17 +10,20 @@ int rows(const char *filename) {
     int count = 0;
     FILE *pCSV = fopen(filename, "r"); //opening csv file
 
+    //checking for errors
     if(pCSV == NULL){
         printf("Could not open file");  //indicating the user if opening the file fails
         return 1;
     }
 
+
     char buffer[256]; //buffer to store values from fgets
 
+    //skipping the header
     fgets(buffer, sizeof(buffer), pCSV);
 
     while (fgets(buffer, sizeof(buffer), pCSV) != NULL) {
-        count++;
+        count++; //after fgets hits a newline it stores it into buffer
     }
 
     fclose(pCSV);
@@ -32,6 +35,7 @@ int load_value(const char *filename, EightStruct *WaveformSample, int rows) {
     int i = 0;
     FILE *pCSV = fopen(filename, "r"); //opening csv file
 
+    //skipping the header
     if(pCSV == NULL){
         printf("Could not open file");  //indicating the user if opening the file fails
         return 1;
@@ -76,12 +80,15 @@ int load_value(const char *filename, EightStruct *WaveformSample, int rows) {
 }
 
 void results(metrics *output) {
+    //creating a file called output.txt and writing to it
     FILE *results = fopen("output.txt", "w");
 
+    //error checking
     if (results == NULL) {
         printf("\n\nFile does not open");
         return; }
 
+    //writing rms, p2p and mean for each phase
     fprintf(results, "\nPhase A rms is: %lf\n", output->phase[0].rms);
     fprintf(results, "Phase A peak to peak is: %lf\n", output->phase[0].p2p);
     fprintf(results, "Phase A DC offset is: %.16lf\n\n", output->phase[0].mean);
@@ -94,23 +101,10 @@ void results(metrics *output) {
     fprintf(results, "Phase C peak to peak is: %lf\n", output->phase[2].p2p);
     fprintf(results, "Phase C DC offset is: %.16lf\n\n", output->phase[2].mean);
 
+    //writing the no of clipped samples
     fprintf(results, "Total clipped samples is %d\n\n", output->clipping);
 
-    switch (output->tolerance) {
-        case 0:
-            fprintf(results, "All phases are not in tolerance\n\n");
-            break;
-        case 1:
-            fprintf(results, "Phase A is within tolerance. Phase B and C are not\n\n");
-            break;
-        case 2:
-            fprintf(results, "Phase A and B are within tolerance. Phase C is not\n\n");
-            break;
-        case 3:
-            fprintf(results, "All phases are in tolerance\n\n");
-            break;
-    }
-
+    //writing variance and standard deviation for each phase
     fprintf(results, "Phase A Variance is: %lf\n", output->phase[0].var);
     fprintf(results, "Phase A Standard Deviation is: %lf\n\n", output->phase[0].sd);
 
@@ -120,10 +114,12 @@ void results(metrics *output) {
     fprintf(results, "Phase C Variance is: %lf\n", output->phase[2].var);
     fprintf(results, "Phase C Standard Deviation is: %lf\n\n", output->phase[2].sd);
 
+    //wirting the other parameters
     fprintf(results, "Frequency Range: %lf Hz\n\n", output->frequency);
-    fprintf(results, "Power factor is: %lf\n\n", output->power_factor);
-    fprintf(results, "Thd Percent is: %lf\n\n", output->thd_percent);
+    fprintf(results, "Power factor Range is: %lf\n\n", output->power_factor);
+    fprintf(results, "Thd Percent Range is: %lf\n\n", output->thd_percent);
 
+    //printing the bit status flags
     fprintf(results, "Phase A bitstatus:\n");
     for (int i = 7; i >= 0; i--) {
         fprintf(results, "%d", (output->phase[0].status >> i) & 1);
