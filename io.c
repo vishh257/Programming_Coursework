@@ -86,6 +86,7 @@ void results(metrics *output) {
     //error checking
     if (results == NULL) {
         printf("\n\nFile does not open");
+        fclose(results);
         return; }
 
     //writing rms, p2p and mean for each phase
